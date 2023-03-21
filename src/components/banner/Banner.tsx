@@ -1,8 +1,7 @@
-import React, { Component, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import { Carousel } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import * as creators from "../../store/actions/ActionCreator";
-import "./style.css";
 
 export default function () {
   const [media_type, setMedia_type] = useState("all");
@@ -10,14 +9,19 @@ export default function () {
   // setMedia_type('all');
   // setTime_window('day');
 
-  const trending = useSelector((state: any) => {
-    return state.apiData.trending;
-  });
   const dispatch = useDispatch();
   console.log("media_type", media_type, time_window);
 
   dispatch(creators.getTrending(`trending/${media_type}/${time_window}`));
-  console.log("trending", trending);
+  const trending: any[] = useSelector((state: any) => {
+    return state.apiData.trending;
+  });
+  useEffect(() => {
+    if (media_type && trending?.length) {
+      console.log("trending", trending);
+      setMedia_type("");
+    }
+  }, [trending, media_type]);
 
   const imgBasePath = "https://image.tmdb.org/t/p/original";
 

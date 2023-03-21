@@ -1,21 +1,51 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Card, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import * as creators from "../../store/actions/ActionCreator";
-import "./style.css";
+import styled from "styled-components";
 
+const Populardiv = styled.div`
+  background-color: #083c515e;
+  padding-top: 20px;
+`;
+const Selectlist = styled.div`
+  padding: 5px;
+  margin-left: 10px;
+  border: 1px solid black;
+  border-radius: 25px;
+`;
+const WhatsPopular = styled.div`
+  display: flex;
+  padding: 2;
+`;
+const Anchor = styled.a`
+  padding: 5px;
+  &.selected {
+    background-color: blue;
+    border-radius: 25px;
+    color: white;
+    text-decoration: none;
+  }
+`;
+const Moviecard = styled(Card)`
+  padding: 0.25rem;
+`;
+const Cardcontainer = styled(Card)`
+  height: 250px;
+`;
 export default function () {
-  const [media_type, setMedia_type] = useState("all");
-  const [time_window, setTime_window] = useState("day");
+  const dispatch = useDispatch();
+
+  dispatch(creators.getPopular({}, `popular`));
+
   const popularMovies = useSelector((state: any) => {
     return state.apiData.popular;
   });
-  const dispatch = useDispatch();
-  console.log("media_type", media_type, time_window);
+  useEffect(() => {
+    console.log("popularMovies", popularMovies);
+  }, [popularMovies]);
 
-  dispatch(creators.getPopular({}, `popular`));
-  console.log("popularMovies", popularMovies);
   let movie2DArr: any = [];
   let tempMovieArr: any = [];
   popularMovies?.forEach((item: any, index: number) => {
@@ -28,25 +58,25 @@ export default function () {
   });
 
   return (
-    <div className="popular">
-      <div className="whatsPopular p-2">
+    <Populardiv>
+      <WhatsPopular>
         <div>
           <h3>What's Popular</h3>
         </div>
-        <div className="selectList">
-          <a className="selected">Streaming</a>
-          <a>On TV</a>
-          <a>For Rent</a>
-          <a>In Theaters</a>
-        </div>
-      </div>
-      <div id="cardHolder" className="1-1">
+        <Selectlist>
+          <Anchor className="selected">Streaming</Anchor>
+          <Anchor>On TV</Anchor>
+          <Anchor>For Rent</Anchor>
+          <Anchor>In Theaters</Anchor>
+        </Selectlist>
+      </WhatsPopular>
+      <div id="cardHolder" className="m-1">
         {movie2DArr.map((movieAr: any[], index: number) => {
           return (
-            <div className="cardContainer d-flex w-100 row m-1">
+            <div className="cardContainer w-100 row m-1">
               {movieAr.map((item: any) => {
                 return (
-                  <Card className="movieCard p-1 col-3">
+                  <Moviecard className="col-sm-3 col-md-3">
                     <Card.Img
                       variant="top"
                       src={`https://image.tmdb.org/t/p/original/${item.poster_path}`}
@@ -55,13 +85,13 @@ export default function () {
                       <Card.Title>{item.original_title}</Card.Title>
                       <Card.Text>{item.release_date}</Card.Text>
                     </Card.Body>
-                  </Card>
+                  </Moviecard>
                 );
               })}
             </div>
           );
         })}
       </div>
-    </div>
+    </Populardiv>
   );
 }
