@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Navbar, Container, Nav, NavDropdown, Button } from "react-bootstrap";
-import "./style.css";
 
 class NavBar extends Component {
   render() {
